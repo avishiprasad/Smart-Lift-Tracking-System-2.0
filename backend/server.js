@@ -1,25 +1,52 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const errorHandler=
+require("./middleware/errorHandler");
+
+const connectDB = require("./config/db");
+
 const liftRoutes = require("./routes/liftRoutes");
+const requestRoutes = require("./routes/requestRoutes");
+
+const { startScheduler } = require("./scheduler/Scheduler");
 
 const app = express();
 
+// Middleware
 app.use(cors());
 app.use(express.json());
 
+// Routes
+app.use("/api/lifts", liftRoutes);
+app.use("/api/requests", requestRoutes);
+
+// Health Check
 app.get("/", (req, res) => {
     res.send("Smart Lift Tracking Backend Running");
 });
 
 const PORT = process.env.PORT || 5000;
+app.use(errorHandler);
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
+// Start Server
+const startServer = async () => {
+    try {
+        // Connect Database
+        await connectDB();
 
-const connectDB = require("./config/db");
+        // Start Lift Scheduler
+        startScheduler();
 
-connectDB();
+        // Start Express Server
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on port ${PORT}`);
+        });
 
-app.use("/api/lifts", liftRoutes);
+    } catch (error) {
+        console.error("Failed to start server:", error);
+        process.exit(1);
+    }
+};
+
+startServer();

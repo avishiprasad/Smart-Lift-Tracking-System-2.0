@@ -44,20 +44,26 @@ const liftSchema = new mongoose.Schema({
         default: 0,
     },
 
-    emergency: {
-        type: Boolean,
-        default: false,
-    },
-
-    maintenance: {
-        type: Boolean,
-        default: false,
-    },
-
-    requestQueue: {
-        type: [Number],
-        default: [],
-    },
+    requestQueue: [
+        {
+          floor: {
+            type: Number,
+            required: true,
+          },
+      
+          type: {
+            type: String,
+            enum: ["PICKUP", "DROPOFF"],
+            required: true,
+          },
+      
+          requestId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "LiftRequest",
+            required: true,
+          },
+        },
+      ],
 }, { timestamps: true });
 
 module.exports = mongoose.model("Lift", liftSchema);
