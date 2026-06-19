@@ -56,3 +56,47 @@ export const mockAnalyticsSummary: AnalyticsSummary = {
   averageWaitTime: 18.4,
   systemHealth: 94,
 };
+
+// Add to existing mockData.ts
+
+export interface OccupancyPoint {
+  time: string;
+  occupancy: number;
+}
+
+export const mockOccupancyHistory: OccupancyPoint[] = [
+  { time: "06:00", occupancy: 12 }, { time: "08:00", occupancy: 68 },
+  { time: "10:00", occupancy: 45 }, { time: "12:00", occupancy: 80 },
+  { time: "14:00", occupancy: 55 }, { time: "16:00", occupancy: 40 },
+  { time: "18:00", occupancy: 75 }, { time: "20:00", occupancy: 30 },
+];
+
+export interface LiftUsagePoint {
+  lift: string;
+  trips: number;
+}
+
+export const mockLiftUsage: LiftUsagePoint[] = [
+  { lift: "L1", trips: 142 }, { lift: "L2", trips: 98 }, { lift: "L3", trips: 176 },
+  { lift: "L4", trips: 64 }, { lift: "L5", trips: 121 }, { lift: "L6", trips: 89 },
+];
+
+export interface EmergencyEventPoint {
+  date: string;
+  count: number;
+}
+
+export const mockEmergencyEvents: EmergencyEventPoint[] = [
+  { date: "Mon", count: 1 }, { date: "Tue", count: 0 }, { date: "Wed", count: 2 },
+  { date: "Thu", count: 0 }, { date: "Fri", count: 1 }, { date: "Sat", count: 0 }, { date: "Sun", count: 1 },
+];
+
+export interface MaintenanceFrequencyPoint {
+  month: string;
+  count: number;
+}
+
+export const mockMaintenanceFrequency: MaintenanceFrequencyPoint[] = [
+  { month: "Jan", count: 3 }, { month: "Feb", count: 5 }, { month: "Mar", count: 2 },
+  { month: "Apr", count: 6 }, { month: "May", count: 4 }, { month: "Jun", count: 3 },
+];

@@ -15,25 +15,26 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar,
 } from "recharts";
+import { useOccupancyHistory, useLiftUsage } from "@/hooks/useAnalytics";
+// const occupancyTrend = [
+//   { time: "06:00", occupancy: 12 }, { time: "08:00", occupancy: 68 },
+//   { time: "10:00", occupancy: 45 }, { time: "12:00", occupancy: 80 },
+//   { time: "14:00", occupancy: 55 }, { time: "16:00", occupancy: 40 },
+//   { time: "18:00", occupancy: 75 }, { time: "20:00", occupancy: 30 },
+// ];
 
-const occupancyTrend = [
-  { time: "06:00", occupancy: 12 }, { time: "08:00", occupancy: 68 },
-  { time: "10:00", occupancy: 45 }, { time: "12:00", occupancy: 80 },
-  { time: "14:00", occupancy: 55 }, { time: "16:00", occupancy: 40 },
-  { time: "18:00", occupancy: 75 }, { time: "20:00", occupancy: 30 },
-];
-
-const usageByLift = [
-  { lift: "L1", trips: 142 }, { lift: "L2", trips: 98 }, { lift: "L3", trips: 176 },
-  { lift: "L4", trips: 64 }, { lift: "L5", trips: 121 }, { lift: "L6", trips: 89 },
-];
+// const usageByLift = [
+//   { lift: "L1", trips: 142 }, { lift: "L2", trips: 98 }, { lift: "L3", trips: 176 },
+//   { lift: "L4", trips: 64 }, { lift: "L5", trips: 121 }, { lift: "L6", trips: 89 },
+// ];
 
 export default function DashboardPage() {
   const { data: lifts, isLoading: liftsLoading } = useLifts();
   const { data: summary, isLoading: summaryLoading } = useAnalyticsSummary();
   const { data: logs, isLoading: logsLoading } = useActivityLogs();
   const { data: notifications, isLoading: notifLoading } = useNotifications();
-
+  const { data: occupancyTrend } = useOccupancyHistory();
+  const { data: usageByLift } = useLiftUsage();
   return (
     <DashboardShell>
       <div className="space-y-6">
@@ -55,7 +56,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           <ChartCard title="Occupancy Trend" subtitle="Today, by hour">
             <ResponsiveContainer width="100%" height={220}>
-              <AreaChart data={occupancyTrend}>
+              <AreaChart data={occupancyTrend ?? []}>
                 <defs>
                   <linearGradient id="occGradient" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#8B5CF6" stopOpacity={0.4} />
@@ -73,7 +74,7 @@ export default function DashboardPage() {
 
           <ChartCard title="Lift Usage" subtitle="Trips today, per lift">
             <ResponsiveContainer width="100%" height={220}>
-              <BarChart data={usageByLift}>
+              <BarChart data={usageByLift ?? []}>
                 <CartesianGrid stroke="#1F2937" strokeDasharray="3 3" />
                 <XAxis dataKey="lift" stroke="#9CA3AF" fontSize={11} />
                 <YAxis stroke="#9CA3AF" fontSize={11} />

@@ -81,3 +81,7 @@ export interface NavItem {
   label: string;
   href: string;
 }
+export interface OccupancyPoint { time: string; occupancy: number; }
+export interface LiftUsagePoint { lift: string; trips: number; }
+export interface EmergencyEventPoint { date: string; count: number; }
+export interface MaintenanceFrequencyPoint { month: string; count: number; }
