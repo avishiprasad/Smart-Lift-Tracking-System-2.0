@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const liftRoutes = require("./routes/liftRoutes");
 
 const app = express();
 
@@ -20,3 +21,5 @@ app.listen(PORT, () => {
 const connectDB = require("./config/db");
 
 connectDB();
+
+app.use("/api/lifts", liftRoutes);

@@ -1,65 +1,63 @@
 const mongoose = require("mongoose");
-
-const liftSchema = new mongoose.Schema(
-  {
+const liftSchema = new mongoose.Schema({
     liftNumber: {
-      type: Number,
-      required: true,
-      unique: true,
+        type: Number,
+        required: true,
+        unique: true,
+    },
+
+    servingFloors: {
+        type: [Number],
+        required: true,
+        default: [1],
     },
 
     currentFloor: {
-      type: Number,
-      default: 0,
+        type: Number,
+        default: 1,
     },
 
     targetFloor: {
-      type: Number,
-      default: 0,
+        type: Number,
+        default: 1,
     },
 
     direction: {
-      type: String,
-      enum: ["UP", "DOWN", "IDLE"],
-      default: "IDLE",
+        type: String,
+        enum: ["UP", "DOWN", "IDLE"],
+        default: "IDLE",
     },
 
     status: {
-      type: String,
-      enum: ["IDLE", "MOVING", "MAINTENANCE", "EMERGENCY"],
-      default: "IDLE",
+        type: String,
+        enum: ["IDLE", "MOVING", "MAINTENANCE", "EMERGENCY"],
+        default: "IDLE",
     },
 
     occupancy: {
-      type: Number,
-      default: 0,
-      min: 0,
-      max: 100,
+        type: Number,
+        default: 0,
     },
 
     eta: {
-      type: Number,
-      default: 0,
+        type: Number,
+        default: 0,
     },
 
     emergency: {
-      type: Boolean,
-      default: false,
+        type: Boolean,
+        default: false,
     },
 
     maintenance: {
-      type: Boolean,
-      default: false,
+        type: Boolean,
+        default: false,
     },
 
     requestQueue: {
-      type: [Number],
-      default: [],
+        type: [Number],
+        default: [],
     },
-  },
-  {
-    timestamps: true,
-  }
-);
+}, { timestamps: true });
 
 module.exports = mongoose.model("Lift", liftSchema);
