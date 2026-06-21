@@ -16,12 +16,21 @@ const tick = async () => {
   for (const lift of lifts) {
     // No pending requests
     if (lift.requestQueue.length === 0) {
-      await Lift.findByIdAndUpdate(lift._id, {
-        status: STATUS.IDLE,
-        direction: "IDLE",
-        eta: 0,
-      });
 
+      // Don't overwrite maintenance or emergency status
+      if (
+        lift.status !== STATUS.MAINTENANCE &&
+        lift.status !== STATUS.EMERGENCY
+      ) {
+    
+        await Lift.findByIdAndUpdate(lift._id, {
+          status: STATUS.IDLE,
+          direction: "IDLE",
+          eta: 0,
+        });
+    
+      }
+    
       continue;
     }
 
@@ -76,10 +85,17 @@ const tick = async () => {
         ? "DOWN"
         : "IDLE";
 
-    const status =
-      lift.requestQueue.length > 0
-        ? STATUS.MOVING
-        : STATUS.IDLE;
+        let status = lift.status;
+
+        if (
+          status !== STATUS.MAINTENANCE &&
+          status !== STATUS.EMERGENCY
+        ) {
+          status =
+            lift.requestQueue.length > 0
+              ? STATUS.MOVING
+              : STATUS.IDLE;
+        }
 
     const eta =
       Math.abs(target - current) *

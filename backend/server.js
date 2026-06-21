@@ -12,6 +12,9 @@ const requestRoutes = require("./routes/requestRoutes");
 const { startScheduler } = require("./scheduler/Scheduler");
 
 const app = express();
+const activityLogRoutes = require("./routes/activityLogRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const analyticsRoutes = require("./routes/analyticsRoutes");
 
 // Middleware
 app.use(cors());
@@ -20,6 +23,11 @@ app.use(express.json());
 // Routes
 app.use("/api/lifts", liftRoutes);
 app.use("/api/requests", requestRoutes);
+app.use("/api/activity-logs", activityLogRoutes);
+
+app.use("/api/notifications", notificationRoutes);
+
+app.use("/api/analytics", analyticsRoutes);
 
 // Health Check
 app.get("/", (req, res) => {

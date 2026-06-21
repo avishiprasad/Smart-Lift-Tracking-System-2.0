@@ -66,4 +66,6 @@ const liftSchema = new mongoose.Schema({
       ],
 }, { timestamps: true });
 
-module.exports = mongoose.model("Lift", liftSchema);
+module.exports =
+  mongoose.models.Lift ||
+  mongoose.model("Lift", liftSchema);
