@@ -5,7 +5,7 @@ import { Pencil, Trash2, RotateCcw, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Lift } from "@/types";
+import { Lift, LiftStatus } from "@/types";
 import { StatusBadge } from "./status-badge";
 import { cn } from "@/lib/utils";
 
@@ -24,8 +24,12 @@ export function ManageLiftCard({ lift, onUpdate, onDelete, onReset }: ManageLift
   });
 
   function save() {
-    onUpdate(lift.id, { currentFloor: draft.currentFloor, targetFloor: draft.targetFloor });
+    onUpdate(lift._id, { currentFloor: draft.currentFloor, targetFloor: draft.targetFloor });
     setEditing(false);
+  }
+
+  function setStatus(status: LiftStatus) {
+    onUpdate(lift._id, { status: lift.status === status ? "IDLE" : status });
   }
 
   return (
@@ -72,9 +76,9 @@ export function ManageLiftCard({ lift, onUpdate, onDelete, onReset }: ManageLift
         </div>
       )}
 
-      <div className="mt-4 flex items-center gap-4 text-xs">
-        <Toggle label="Emergency" active={lift.emergency} tone="danger" onClick={() => onUpdate(lift.id, { emergency: !lift.emergency })} />
-        <Toggle label="Maintenance" active={lift.maintenance} tone="warning" onClick={() => onUpdate(lift.id, { maintenance: !lift.maintenance })} />
+      <div className="mt-4 flex items-center gap-2 text-xs">
+        <Toggle label="Emergency" active={lift.status === "EMERGENCY"} tone="danger" onClick={() => setStatus("EMERGENCY")} />
+        <Toggle label="Maintenance" active={lift.status === "MAINTENANCE"} tone="warning" onClick={() => setStatus("MAINTENANCE")} />
       </div>
 
       <div className="mt-5 flex gap-2 border-t border-border pt-4">
@@ -87,10 +91,10 @@ export function ManageLiftCard({ lift, onUpdate, onDelete, onReset }: ManageLift
             <Pencil className="h-3.5 w-3.5" /> Update
           </Button>
         )}
-        <Button size="sm" variant="outline" className="flex-1 gap-1.5 border-border text-white hover:bg-white/5" onClick={() => onReset(lift.id)}>
+        <Button size="sm" variant="outline" className="flex-1 gap-1.5 border-border text-white hover:bg-white/5" onClick={() => onReset(lift._id)}>
           <RotateCcw className="h-3.5 w-3.5" /> Reset
         </Button>
-        <Button size="sm" variant="outline" className="gap-1.5 border-danger/40 text-danger hover:bg-danger/10" onClick={() => onDelete(lift.id)}>
+        <Button size="sm" variant="outline" className="gap-1.5 border-danger/40 text-danger hover:bg-danger/10" onClick={() => onDelete(lift._id)}>
           <Trash2 className="h-3.5 w-3.5" />
         </Button>
       </div>

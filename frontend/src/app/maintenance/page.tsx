@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "sonner";
 import { Wrench } from "lucide-react";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { MaintenanceCard } from "@/components/maintenance/maintenance-card";
@@ -21,10 +20,6 @@ const calendarPlaceholder = Array.from({ length: 30 }, (_, i) => ({
 export default function MaintenancePage() {
   const { data: records, isLoading } = useMaintenanceRecords();
 
-  function handleSchedule(id: string) {
-    toast(`Maintenance scheduled for ${id}`);
-  }
-
   return (
     <DashboardShell>
       <div className="space-y-6">
@@ -42,7 +37,7 @@ export default function MaintenancePage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {records.map((r) => (
-              <MaintenanceCard key={r.id} record={r} onSchedule={handleSchedule} />
+              <MaintenanceCard key={r.id} record={r} />
             ))}
           </div>
         )}

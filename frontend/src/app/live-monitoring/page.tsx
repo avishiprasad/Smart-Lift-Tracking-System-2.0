@@ -33,7 +33,7 @@ export default function LiveMonitoringPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {lifts.map((lift) => (
-              <LiftCard key={lift.id} lift={lift} onClick={() => setSelected(lift)} />
+              <LiftCard key={lift._id} lift={lift} onClick={() => setSelected(lift)} />
             ))}
           </div>
         )}

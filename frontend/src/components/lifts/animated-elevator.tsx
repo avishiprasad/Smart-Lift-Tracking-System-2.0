@@ -12,10 +12,10 @@ interface AnimatedElevatorProps {
 }
 
 const STATUS_DOT: Record<LiftStatus, string> = {
-  idle: "bg-secondary shadow-glow-cyan",
-  moving: "bg-success",
-  maintenance: "bg-warning",
-  emergency: "bg-danger animate-pulse-emergency",
+  IDLE: "bg-secondary shadow-glow-cyan",
+  MOVING: "bg-success",
+  MAINTENANCE: "bg-warning",
+  EMERGENCY: "bg-danger animate-pulse-emergency",
 };
 
 export function AnimatedElevator({ currentFloor, totalFloors, status, direction }: AnimatedElevatorProps) {
@@ -34,8 +34,8 @@ export function AnimatedElevator({ currentFloor, totalFloors, status, direction 
         style={{ marginTop: `-${100 / totalFloors / 2}%` }}
       >
         <div className={cn("flex h-full w-full items-center justify-center rounded-md", STATUS_DOT[status])}>
-          {direction !== "idle" && (
-            <span className="text-[8px] font-bold text-background">{direction === "up" ? "▲" : "▼"}</span>
+          {direction !== "IDLE" && (
+            <span className="text-[8px] font-bold text-background">{direction === "UP" ? "▲" : "▼"}</span>
           )}
         </div>
       </motion.div>

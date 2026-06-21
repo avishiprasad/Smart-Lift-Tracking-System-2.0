@@ -11,10 +11,10 @@ export const NAV_ITEMS = [
   ] as const;
   
   export const STATUS_COLORS: Record<string, string> = {
-    idle: "text-secondary border-secondary/30 bg-secondary/10",
-    moving: "text-success border-success/30 bg-success/10",
-    maintenance: "text-warning border-warning/30 bg-warning/10",
-    emergency: "text-danger border-danger/30 bg-danger/10",
+    IDLE: "text-secondary border-secondary/30 bg-secondary/10",
+    MOVING: "text-success border-success/30 bg-success/10",
+    MAINTENANCE: "text-warning border-warning/30 bg-warning/10",
+    EMERGENCY: "text-danger border-danger/30 bg-danger/10",
   };
   
   export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5000/api";

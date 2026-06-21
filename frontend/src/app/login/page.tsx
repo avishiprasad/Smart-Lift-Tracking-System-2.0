@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
@@ -11,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { useAppContext } from "@/context/app-context";
 import { UserRole } from "@/types";
+import { loginSchema, LoginFormValues } from "@/lib/validation/auth";
 
 const ROLES: { value: UserRole; label: string; icon: typeof ShieldCheck }[] = [
   { value: "admin", label: "Administrator", icon: ShieldCheck },
@@ -21,14 +23,22 @@ const ROLES: { value: UserRole; label: string; icon: typeof ShieldCheck }[] = [
 export default function LoginPage() {
   const router = useRouter();
   const { setUser } = useAppContext();
-  const [role, setRole] = useState<UserRole>("admin");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setUser({ id: "u1", name: email.split("@")[0] || "Avi", email, role });
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "", role: "admin" },
+  });
+
+  const role = watch("role");
+
+  function onSubmit(values: LoginFormValues) {
+    setUser({ id: "u1", name: values.email.split("@")[0] || "Avi", email: values.email, role: values.role });
     router.push("/dashboard");
   }
 
@@ -40,7 +50,6 @@ export default function LoginPage() {
       </div>
 
       <div className="grid w-full max-w-4xl grid-cols-1 overflow-hidden rounded-2xl border border-border bg-card/40 backdrop-blur-xl md:grid-cols-2">
-        {/* Left: illustration panel */}
         <div className="relative hidden flex-col justify-between bg-gradient-to-br from-primary/20 to-secondary/10 p-10 md:flex">
           <Link href="/" className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-glow">
@@ -68,7 +77,6 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Right: form */}
         <div className="p-8 md:p-10">
           <h1 className="text-2xl font-semibold text-white">Welcome back</h1>
           <p className="mt-1 text-sm text-muted-foreground">Sign in to access your dashboard.</p>
@@ -81,7 +89,7 @@ export default function LoginPage() {
                 <button
                   key={r.value}
                   type="button"
-                  onClick={() => setRole(r.value)}
+                  onClick={() => setValue("role", r.value)}
                   className={cn(
                     "flex flex-col items-center gap-1.5 rounded-xl border p-3 text-center transition-colors",
                     active
@@ -96,7 +104,7 @@ export default function LoginPage() {
             })}
           </div>
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-xs text-muted-foreground">Email</Label>
               <div className="relative">
@@ -104,13 +112,12 @@ export default function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  {...register("email")}
                   placeholder="you@company.com"
                   className="border-border bg-card/60 pl-9 text-white placeholder:text-muted-foreground"
                 />
               </div>
+              {errors.email && <p className="text-xs text-danger">{errors.email.message}</p>}
             </div>
 
             <div className="space-y-1.5">
@@ -120,23 +127,17 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  {...register("password")}
                   placeholder="••••••••"
                   className="border-border bg-card/60 pl-9 text-white placeholder:text-muted-foreground"
                 />
               </div>
+              {errors.password && <p className="text-xs text-danger">{errors.password.message}</p>}
             </div>
 
             <div className="flex items-center justify-between text-xs">
               <label className="flex items-center gap-2 text-muted-foreground">
-                <input
-                  type="checkbox"
-                  checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
-                  className="h-3.5 w-3.5 rounded border-border bg-card accent-primary"
-                />
+                <input type="checkbox" className="h-3.5 w-3.5 rounded border-border bg-card accent-primary" />
                 Remember me
               </label>
               <a href="#" className="text-secondary hover:underline">Forgot password?</a>

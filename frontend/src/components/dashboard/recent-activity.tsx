@@ -29,11 +29,11 @@ export function RecentActivity({ logs, isLoading }: { logs?: ActivityLog[]; isLo
   return (
     <ul className="space-y-3">
       {logs.slice(0, 5).map((log) => (
-        <li key={log.id} className="flex items-start gap-3 rounded-xl border border-border bg-background/40 p-3">
+        <li key={log._id} className="flex items-start gap-3 rounded-xl border border-border bg-background/40 p-3">
           <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
           <div className="min-w-0">
             <p className="truncate text-sm text-white">{log.description}</p>
-            <p className="text-xs text-muted-foreground">{log.performedBy} · {timeAgo(log.timestamp)}</p>
+            <p className="text-xs text-muted-foreground">{log.performedBy} · {timeAgo(log.createdAt)}</p>
           </div>
         </li>
       ))}

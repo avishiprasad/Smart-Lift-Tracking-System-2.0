@@ -2,19 +2,19 @@ import { cn } from "@/lib/utils";
 import { RequestStatus } from "@/types";
 
 const STYLES: Record<RequestStatus, string> = {
-  pending: "text-warning border-warning/30 bg-warning/10",
-  assigned: "text-secondary border-secondary/30 bg-secondary/10",
-  in_progress: "text-primary border-primary/30 bg-primary/10",
-  completed: "text-success border-success/30 bg-success/10",
-  cancelled: "text-muted-foreground border-border bg-card/40",
+  PENDING: "text-warning border-warning/30 bg-warning/10",
+  ASSIGNED: "text-secondary border-secondary/30 bg-secondary/10",
+  IN_PROGRESS: "text-primary border-primary/30 bg-primary/10",
+  COMPLETED: "text-success border-success/30 bg-success/10",
+  CANCELLED: "text-muted-foreground border-border bg-card/40",
 };
 
 const LABELS: Record<RequestStatus, string> = {
-  pending: "Pending",
-  assigned: "Assigned",
-  in_progress: "In Progress",
-  completed: "Completed",
-  cancelled: "Cancelled",
+  PENDING: "Pending",
+  ASSIGNED: "Assigned",
+  IN_PROGRESS: "In Progress",
+  COMPLETED: "Completed",
+  CANCELLED: "Cancelled",
 };
 
 export function RequestStatusBadge({ status }: { status: RequestStatus }) {

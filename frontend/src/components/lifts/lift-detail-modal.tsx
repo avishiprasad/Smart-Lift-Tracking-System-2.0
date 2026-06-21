@@ -6,8 +6,11 @@ import { Lift } from "@/types";
 import { StatusBadge } from "./status-badge";
 import { AnimatedElevator } from "./animated-elevator";
 import { AlertTriangle, Wrench, RotateCcw } from "lucide-react";
+import { useUpdateLift } from "@/hooks/useLifts";
 
 export function LiftDetailModal({ lift, open, onOpenChange }: { lift: Lift | null; open: boolean; onOpenChange: (open: boolean) => void }) {
+  const { mutate: updateLift, isPending } = useUpdateLift();
+
   if (!lift) return null;
 
   return (
@@ -21,25 +24,48 @@ export function LiftDetailModal({ lift, open, onOpenChange }: { lift: Lift | nul
         </DialogHeader>
 
         <div className="flex gap-5">
-          <AnimatedElevator currentFloor={lift.currentFloor} totalFloors={12} status={lift.status} direction={lift.direction} />
+          <AnimatedElevator
+            currentFloor={lift.currentFloor}
+            totalFloors={lift.servingFloors.length}
+            status={lift.status}
+            direction={lift.direction}
+          />
 
           <div className="flex-1 space-y-3 text-sm">
             <Row label="Current Floor" value={lift.currentFloor} />
             <Row label="Target Floor" value={lift.targetFloor ?? "—"} />
-            <Row label="ETA" value={lift.eta ? `${lift.eta}s` : "—"} />
-            <Row label="Occupancy" value={`${lift.occupancy}/${lift.capacity}`} />
-            <Row label="Queue" value={lift.requestQueue.join(", ") || "Empty"} />
+            <Row label="ETA" value={lift.eta != null ? `${lift.eta}s` : "—"} />
+            <Row label="Occupancy" value={lift.occupancy} />
+            <Row
+              label="Queue"
+              value={lift.requestQueue.length ? lift.requestQueue.map((q) => `${q.type[0]}${q.floor}`).join(", ") : "Empty"}
+            />
           </div>
         </div>
 
         <div className="mt-2 flex gap-2 border-t border-border pt-4">
-          <Button variant="outline" className="flex-1 gap-2 border-danger/40 text-danger hover:bg-danger/10">
+          <Button
+            variant="outline"
+            disabled={isPending}
+            className="flex-1 gap-2 border-danger/40 text-danger hover:bg-danger/10"
+            onClick={() => updateLift({ id: lift._id, payload: { status: "EMERGENCY" } })}
+          >
             <AlertTriangle className="h-4 w-4" /> Emergency Stop
           </Button>
-          <Button variant="outline" className="flex-1 gap-2 border-warning/40 text-warning hover:bg-warning/10">
+          <Button
+            variant="outline"
+            disabled={isPending}
+            className="flex-1 gap-2 border-warning/40 text-warning hover:bg-warning/10"
+            onClick={() => updateLift({ id: lift._id, payload: { status: "MAINTENANCE" } })}
+          >
             <Wrench className="h-4 w-4" /> Schedule Maintenance
           </Button>
-          <Button variant="outline" className="flex-1 gap-2 border-border text-white hover:bg-white/5">
+          <Button
+            variant="outline"
+            disabled={isPending}
+            className="flex-1 gap-2 border-border text-white hover:bg-white/5"
+            onClick={() => updateLift({ id: lift._id, payload: { status: "IDLE", targetFloor: null } })}
+          >
             <RotateCcw className="h-4 w-4" /> Reset
           </Button>
         </div>

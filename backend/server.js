@@ -15,6 +15,7 @@ const app = express();
 const activityLogRoutes = require("./routes/activityLogRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const maintenanceRoutes = require("./routes/maintenanceRoutes");
 
 // Middleware
 app.use(cors());
@@ -28,6 +29,7 @@ app.use("/api/activity-logs", activityLogRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/maintenance", maintenanceRoutes);
 
 // Health Check
 app.get("/", (req, res) => {

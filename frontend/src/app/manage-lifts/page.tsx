@@ -1,67 +1,41 @@
 "use client";
 
 import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { ManageLiftCard } from "@/components/lifts/manage-lift-card";
 import { AddLiftDialog } from "@/components/lifts/add-lift-dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useLifts } from "@/hooks/useLifts";
-import { toast } from "sonner";
+import { useLifts, useUpdateLift, useDeleteLift, useCreateLift } from "@/hooks/useLifts";
 import { Building2 } from "lucide-react";
 import { Lift } from "@/types";
 
 export default function ManageLiftsPage() {
   const { data: lifts, isLoading } = useLifts();
-  const queryClient = useQueryClient();
-
+  const { mutate: updateLift } = useUpdateLift();
+  const { mutate: deleteLift } = useDeleteLift();
+  const { mutate: createLift } = useCreateLift();
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
 
-  function patchCache(updater: (lifts: Lift[]) => Lift[]) {
-    queryClient.setQueryData<Lift[]>(["lifts"], (old) => (old ? updater(old) : old));
-  }
-
   function handleUpdate(id: string, data: Partial<Lift>) {
-    patchCache((lifts) => lifts.map((l) => (l.id === id ? { ...l, ...data } : l)));
-    toast("Lift updated");
+    updateLift({ id, payload: data }, { onSuccess: () => toast.success("Lift updated") });
   }
 
   function handleDelete(id: string) {
-    patchCache((lifts) => lifts.filter((l) => l.id !== id));
-    toast("Lift removed");
+    deleteLift(id, { onSuccess: () => toast.success("Lift removed") });
   }
 
   function handleReset(id: string) {
-    patchCache((lifts) =>
-      lifts.map((l) =>
-        l.id === id ? { ...l, currentFloor: 1, targetFloor: null, status: "idle", emergency: false, maintenance: false, requestQueue: [] } : l
-      )
+    updateLift(
+      { id, payload: { currentFloor: 1, targetFloor: null, status: "IDLE" } },
+      { onSuccess: () => toast.success("Lift reset to idle") }
     );
-    toast("Lift reset to idle");
   }
 
-  function handleAdd(liftNumber: number, capacity: number) {
-    patchCache((lifts) => [
-      ...lifts,
-      {
-        id: `lift-${Date.now()}`,
-        liftNumber,
-        currentFloor: 1,
-        targetFloor: null,
-        direction: "idle",
-        status: "idle",
-        occupancy: 0,
-        capacity,
-        speed: 1.2,
-        eta: null,
-        emergency: false,
-        maintenance: false,
-        requestQueue: [],
-      },
-    ]);
-    toast(`Lift #${liftNumber} added`);
+  function handleAdd(liftNumber: number, servingFloors: number[]) {
+    createLift({ liftNumber, servingFloors }, { onSuccess: () => toast.success(`Lift #${liftNumber} added`) });
   }
 
   return (
@@ -82,7 +56,7 @@ export default function ManageLiftsPage() {
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {lifts.map((lift) => (
               <ManageLiftCard
-                key={lift.id}
+                key={lift._id}
                 lift={lift}
                 onUpdate={handleUpdate}
                 onDelete={(id) => setPendingDelete(id)}

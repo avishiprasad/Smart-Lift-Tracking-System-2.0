@@ -1,63 +1,60 @@
-export type LiftStatus = "idle" | "moving" | "maintenance" | "emergency";
-export type Direction = "up" | "down" | "idle";
+export type LiftStatus = "IDLE" | "MOVING" | "MAINTENANCE" | "EMERGENCY";
+export type Direction = "UP" | "DOWN" | "IDLE";
+export type QueueItemType = "PICKUP" | "DROPOFF";
+export type RequestStatus = "PENDING" | "ASSIGNED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+export type NotificationType = "warning" | "danger" | "info";
 export type UserRole = "admin" | "maintenance" | "security";
 
+export interface QueueItem {
+  floor: number;
+  type: QueueItemType;
+  requestId: string;
+}
+
 export interface Lift {
-  id: string;
+  _id: string;
   liftNumber: number;
+  servingFloors: number[];
   currentFloor: number;
   targetFloor: number | null;
   direction: Direction;
   status: LiftStatus;
   occupancy: number;
-  capacity: number;
-  speed: number;
   eta: number | null;
-  emergency: boolean;
-  maintenance: boolean;
-  requestQueue: number[];
+  requestQueue: QueueItem[];
+  createdAt: string;
+  updatedAt: string;
 }
 
-export type RequestStatus = "pending" | "assigned" | "in_progress" | "completed" | "cancelled";
-
 export interface LiftRequest {
-  id: string;
-  pickupFloor: number;
+  _id: string;
+  requestedFloor: number;
   destinationFloor: number;
   direction: Direction;
-  assignedLift: number | null;
+  assignedLift: string | null;
   status: RequestStatus;
   createdAt: string;
 }
 
-export type NotificationType = "emergency" | "maintenance" | "warning" | "info";
-
 export interface Notification {
-  id: string;
   type: NotificationType;
   title: string;
   message: string;
-  read: boolean;
-  createdAt: string;
+}
+
+export interface ActivityLogLiftRef {
+  _id: string;
+  liftNumber: number;
 }
 
 export interface ActivityLog {
-  id: string;
+  _id: string;
   action: string;
   performedBy: string;
-  liftId: string | null;
+  lift: ActivityLogLiftRef | null;
   description: string;
-  timestamp: string;
-}
-
-export interface MaintenanceRecord {
-  id: string;
-  liftId: string;
-  liftNumber: number;
-  riskScore: number;
-  lastService: string;
-  usageHours: number;
-  breakdowns: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface AnalyticsSummary {
@@ -65,9 +62,10 @@ export interface AnalyticsSummary {
   activeLifts: number;
   maintenanceLifts: number;
   emergencyLifts: number;
-  passengersToday: number;
-  averageWaitTime: number;
-  systemHealth: number;
+  avgOccupancy: string;
+  avgETA: string;
+  completedRequests: number;
+  pendingRequests: number;
 }
 
 export interface User {
@@ -81,7 +79,11 @@ export interface NavItem {
   label: string;
   href: string;
 }
-export interface OccupancyPoint { time: string; occupancy: number; }
-export interface LiftUsagePoint { lift: string; trips: number; }
-export interface EmergencyEventPoint { date: string; count: number; }
-export interface MaintenanceFrequencyPoint { month: string; count: number; }
+
+// Generic envelope every backend response follows
+export interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  count?: number;
+  message?: string;
+}

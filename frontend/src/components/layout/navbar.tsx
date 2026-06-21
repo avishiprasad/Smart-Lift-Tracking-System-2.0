@@ -9,7 +9,7 @@ import { useNotifications } from "@/hooks/useNotifications";
 export function Navbar() {
   const { user } = useAppContext();
   const { data: notifications } = useNotifications();
-  const unread = notifications?.filter((n) => !n.read).length ?? 0;
+  const hasNotifications = (notifications?.length ?? 0) > 0;
 
   return (
     <header className="flex h-16 items-center justify-between border-b border-border bg-background/80 px-6 backdrop-blur-xl">
@@ -24,10 +24,8 @@ export function Navbar() {
       <div className="flex items-center gap-4">
         <button className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-card/60 text-muted-foreground hover:text-white">
           <Bell className="h-4 w-4" />
-          {unread > 0 && (
-            <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-danger text-[10px] font-semibold text-white">
-              {unread}
-            </span>
+          {hasNotifications && (
+            <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-danger" />
           )}
         </button>
 

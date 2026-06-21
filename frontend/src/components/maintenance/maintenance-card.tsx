@@ -1,15 +1,15 @@
 "use client";
 
-import { Clock, Activity, AlertOctagon, CalendarPlus } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { MaintenanceRecord } from "@/types";
+import { Clock, Activity, AlertOctagon } from "lucide-react";
+import { MaintenanceRecord } from "@/lib/mockData";
 import { RiskIndicator } from "./risk-indicator";
+import { ScheduleMaintenanceDialog } from "./schedule-maintenance-dialog";
 
 function daysSince(iso: string) {
   return Math.floor((Date.now() - new Date(iso).getTime()) / 86_400_000);
 }
 
-export function MaintenanceCard({ record, onSchedule }: { record: MaintenanceRecord; onSchedule: (id: string) => void }) {
+export function MaintenanceCard({ record }: { record: MaintenanceRecord }) {
   return (
     <div className="rounded-2xl border border-border bg-card/40 p-5 backdrop-blur">
       <div className="flex items-start justify-between">
@@ -39,14 +39,9 @@ export function MaintenanceCard({ record, onSchedule }: { record: MaintenanceRec
         </div>
       </div>
 
-      <Button
-        size="sm"
-        variant="outline"
-        className="mt-4 w-full gap-2 border-border text-white hover:bg-white/5"
-        onClick={() => onSchedule(record.id)}
-      >
-        <CalendarPlus className="h-3.5 w-3.5" /> Schedule Maintenance
-      </Button>
+      <div className="mt-4">
+        <ScheduleMaintenanceDialog liftId={record.liftId} liftNumber={record.liftNumber} />
+      </div>
     </div>
   );
 }

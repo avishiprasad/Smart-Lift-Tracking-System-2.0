@@ -1,21 +1,32 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { createLiftSchema, CreateLiftFormValues } from "@/lib/validation/lift";
 
-export function AddLiftDialog({ onAdd }: { onAdd: (liftNumber: number, capacity: number) => void }) {
+export function AddLiftDialog({ onAdd }: { onAdd: (liftNumber: number, servingFloors: number[]) => void }) {
   const [open, setOpen] = useState(false);
-  const [liftNumber, setLiftNumber] = useState("");
-  const [capacity, setCapacity] = useState("10");
 
-  function submit() {
-    if (!liftNumber) return;
-    onAdd(Number(liftNumber), Number(capacity));
-    setLiftNumber("");
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CreateLiftFormValues>({
+    resolver: zodResolver(createLiftSchema),
+    defaultValues: { liftNumber: undefined, servingFloors: "1,2,3,4,5" },
+  });
+
+  function onSubmit(values: CreateLiftFormValues) {
+    const parsed = createLiftSchema.parse(values);
+    onAdd(parsed.liftNumber, parsed.servingFloors);
+    reset();
     setOpen(false);
   }
 
@@ -30,21 +41,23 @@ export function AddLiftDialog({ onAdd }: { onAdd: (liftNumber: number, capacity:
         <DialogHeader>
           <DialogTitle>Add Lift</DialogTitle>
         </DialogHeader>
-        <div className="space-y-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
           <div className="space-y-1">
             <Label className="text-xs text-muted-foreground">Lift Number</Label>
-            <Input value={liftNumber} onChange={(e) => setLiftNumber(e.target.value)} type="number" className="border-border bg-background/60 text-white" />
+            <Input type="number" {...register("liftNumber")} className="border-border bg-background/60 text-white" />
+            {errors.liftNumber && <p className="text-xs text-danger">{errors.liftNumber.message}</p>}
           </div>
           <div className="space-y-1">
-            <Label className="text-xs text-muted-foreground">Capacity</Label>
-            <Input value={capacity} onChange={(e) => setCapacity(e.target.value)} type="number" className="border-border bg-background/60 text-white" />
+            <Label className="text-xs text-muted-foreground">Serving Floors (comma-separated)</Label>
+            <Input {...register("servingFloors")} className="border-border bg-background/60 text-white" />
+            {errors.servingFloors && <p className="text-xs text-danger">{errors.servingFloors.message}</p>}
           </div>
-        </div>
-        <DialogFooter>
-          <Button className="w-full bg-primary text-white hover:bg-primary/90" onClick={submit}>
-            Add Lift
-          </Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="submit" className="w-full bg-primary text-white hover:bg-primary/90">
+              Add Lift
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

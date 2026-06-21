@@ -1,23 +1,14 @@
 "use client";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { Bell } from "lucide-react";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { NotificationCard } from "@/components/notifications/notification-card";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useNotifications } from "@/hooks/useNotifications";
-import { Notification } from "@/types";
 
 export default function NotificationsPage() {
   const { data: notifications, isLoading } = useNotifications();
-  const queryClient = useQueryClient();
-
-  function handleMarkRead(id: string) {
-    queryClient.setQueryData<Notification[]>(["notifications"], (old) =>
-      old ? old.map((n) => (n.id === id ? { ...n, read: true } : n)) : old
-    );
-  }
 
   return (
     <DashboardShell>
@@ -35,8 +26,8 @@ export default function NotificationsPage() {
           <EmptyState icon={Bell} title="You're all caught up" description="New notifications will appear here." />
         ) : (
           <div className="space-y-3">
-            {notifications.map((n) => (
-              <NotificationCard key={n.id} notification={n} onMarkRead={handleMarkRead} />
+            {notifications.map((n, i) => (
+              <NotificationCard key={i} notification={n} />
             ))}
           </div>
         )}

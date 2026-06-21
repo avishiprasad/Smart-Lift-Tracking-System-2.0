@@ -1,8 +1,15 @@
 import axios from "axios";
-import { API_BASE_URL } from "./constants";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
+
+if (!API_URL) {
+  // Fails loudly at build/dev time rather than silently hitting a wrong URL
+  console.error("NEXT_PUBLIC_API_URL is not set. Check .env.local.");
+}
 
 export const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_URL,
+  timeout: 10_000,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -13,3 +20,8 @@ axiosInstance.interceptors.request.use((config) => {
   }
   return config;
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => Promise.reject(error)
+);

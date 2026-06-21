@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
 import { ArrowUp, ArrowDown, ListChecks } from "lucide-react";
 import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { RequestStatusBadge } from "@/components/lifts/request-status-badge";
@@ -9,22 +8,22 @@ import { CreateRequestDialog } from "@/components/lifts/create-request-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useRequests } from "@/hooks/useRequests";
-import { LiftRequest, RequestStatus } from "@/types";
+import { useRequests, useCreateRequest } from "@/hooks/useRequests";
+import { RequestStatus } from "@/types";
 import { cn } from "@/lib/utils";
 
 const FILTERS: { value: RequestStatus | "all"; label: string }[] = [
   { value: "all", label: "All" },
-  { value: "pending", label: "Pending" },
-  { value: "assigned", label: "Assigned" },
-  { value: "in_progress", label: "In Progress" },
-  { value: "completed", label: "Completed" },
-  { value: "cancelled", label: "Cancelled" },
+  { value: "PENDING", label: "Pending" },
+  { value: "ASSIGNED", label: "Assigned" },
+  { value: "IN_PROGRESS", label: "In Progress" },
+  { value: "COMPLETED", label: "Completed" },
+  { value: "CANCELLED", label: "Cancelled" },
 ];
 
 export default function RequestsPage() {
   const { data: requests, isLoading } = useRequests();
-  const queryClient = useQueryClient();
+  const { mutate: createRequest } = useCreateRequest();
   const [filter, setFilter] = useState<RequestStatus | "all">("all");
 
   const filtered = useMemo(
@@ -32,17 +31,8 @@ export default function RequestsPage() {
     [requests, filter]
   );
 
-  function handleCreate(pickupFloor: number, destinationFloor: number) {
-    const newRequest: LiftRequest = {
-      id: `req-${Date.now()}`,
-      pickupFloor,
-      destinationFloor,
-      direction: destinationFloor > pickupFloor ? "up" : "down",
-      assignedLift: null,
-      status: "pending",
-      createdAt: new Date().toISOString(),
-    };
-    queryClient.setQueryData<LiftRequest[]>(["requests"], (old) => (old ? [newRequest, ...old] : [newRequest]));
+  function handleCreate(requestedFloor: number, destinationFloor: number) {
+    createRequest({ requestedFloor, destinationFloor });
   }
 
   return (
@@ -85,16 +75,16 @@ export default function RequestsPage() {
               </thead>
               <tbody>
                 {filtered.map((r) => (
-                  <tr key={r.id} className="border-b border-border/60 last:border-0 hover:bg-white/5">
-                    <td className="px-5 py-3 text-white">{r.pickupFloor}</td>
+                  <tr key={r._id} className="border-b border-border/60 last:border-0 hover:bg-white/5">
+                    <td className="px-5 py-3 text-white">{r.requestedFloor}</td>
                     <td className="px-5 py-3 text-white">{r.destinationFloor}</td>
                     <td className="px-5 py-3">
-                      <span className={cn("inline-flex items-center gap-1", r.direction === "up" ? "text-success" : "text-secondary")}>
-                        {r.direction === "up" ? <ArrowUp className="h-3.5 w-3.5" /> : <ArrowDown className="h-3.5 w-3.5" />}
+                      <span className={cn("inline-flex items-center gap-1", r.direction === "UP" ? "text-success" : "text-secondary")}>
+                        {r.direction === "UP" ? <ArrowUp className="h-3.5 w-3.5" /> : <ArrowDown className="h-3.5 w-3.5" />}
                         {r.direction}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-muted-foreground">{r.assignedLift ? `Lift ${r.assignedLift}` : "—"}</td>
+                    <td className="px-5 py-3 text-muted-foreground">{r.assignedLift ?? "—"}</td>
                     <td className="px-5 py-3"><RequestStatusBadge status={r.status} /></td>
                     <td className="px-5 py-3 text-muted-foreground">{new Date(r.createdAt).toLocaleTimeString()}</td>
                   </tr>
