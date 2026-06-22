@@ -1,26 +1,12 @@
-const ActivityLog = require("../models/activityLog");
-
-const logActivity = async ({
-  action,
+const createMaintenanceLog = async ({
   lift,
-  description,
-  performedBy = "SYSTEM",
+  engineer,
+  action,
 }) => {
   return await ActivityLog.create({
     action,
     lift,
-    description,
-    performedBy,
+    performedBy: engineer,
+    description: `${action} by ${engineer}`,
   });
-};
-
-const getAllLogs = async () => {
-  return await ActivityLog.find()
-    .populate("lift", "liftNumber")
-    .sort({ createdAt: -1 });
-};
-
-module.exports = {
-  logActivity,
-  getAllLogs,
 };

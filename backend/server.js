@@ -39,6 +39,7 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 5000;
 app.use(errorHandler);
 
+
 // Start Server
 const startServer = async () => {
     try {
@@ -60,3 +61,11 @@ const startServer = async () => {
 };
 
 startServer();
+const {
+    updateMaintenanceStatus,
+  } = require("./scheduler/MaintenanceScheduler");
+    
+  setInterval(
+    updateMaintenanceStatus,
+    10000//for testing else use 60 * 60 * 1000 // every hour
+  );

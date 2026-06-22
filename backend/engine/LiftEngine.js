@@ -1,5 +1,5 @@
 const Lift = require("../models/Lift");
-const LiftRequest = require("../models/LiftRequest");
+const LiftRequest = require("../models/liftRequest");
 
 const {
   FLOOR_TRAVEL_TIME,
