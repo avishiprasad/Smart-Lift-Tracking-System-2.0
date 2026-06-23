@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const {
-  getLogs,
+    getLogs,
 } = require("../controllers/ActivityLogController");
 
 router.get("/", getLogs);

@@ -84,7 +84,11 @@ export default function RequestsPage() {
                         {r.direction}
                       </span>
                     </td>
-                    <td className="px-5 py-3 text-muted-foreground">{r.assignedLift ?? "—"}</td>
+                    <td className="px-5 py-3 text-muted-foreground">
+  {r.assignedLift
+    ? `Lift ${r.assignedLift.liftNumber}`
+    : "—"}
+</td>
                     <td className="px-5 py-3"><RequestStatusBadge status={r.status} /></td>
                     <td className="px-5 py-3 text-muted-foreground">{new Date(r.createdAt).toLocaleTimeString()}</td>
                   </tr>

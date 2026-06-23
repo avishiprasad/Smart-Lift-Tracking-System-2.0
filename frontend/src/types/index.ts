@@ -4,7 +4,43 @@ export type QueueItemType = "PICKUP" | "DROPOFF";
 export type RequestStatus = "PENDING" | "ASSIGNED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
 export type NotificationType = "warning" | "danger" | "info";
 export type UserRole = "admin" | "maintenance" | "security";
+export type MaintenanceStatus = "SCHEDULED" | "IN_PROGRESS" | "COMPLETED" | "OVERDUE" | "CANCELLED";
 
+export interface MaintenanceRecord {
+  _id: string;
+  lift: {
+    _id: string;
+    liftNumber: number;
+  };
+  engineer: string;
+  description: string;
+  usageHours: number;
+  breakdowns: number;
+  riskScore: number;
+  lastServiceDate: string;
+  nextServiceDate: string;
+  status: MaintenanceStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateMaintenancePayload {
+  lift: string;
+  engineer: string;
+  description: string;
+  usageHours: number;
+  breakdowns: number;
+  lastServiceDate: string;
+  nextServiceDate: string;
+}
+
+export interface UpdateMaintenancePayload {
+  status?: MaintenanceStatus;
+  engineer?: string;
+  description?: string;
+  usageHours?: number;
+  breakdowns?: number;
+}
 export interface QueueItem {
   floor: number;
   type: QueueItemType;
@@ -31,7 +67,12 @@ export interface LiftRequest {
   requestedFloor: number;
   destinationFloor: number;
   direction: Direction;
-  assignedLift: string | null;
+
+  assignedLift: {
+    _id: string;
+    liftNumber: number;
+  } | null;
+
   status: RequestStatus;
   createdAt: string;
 }

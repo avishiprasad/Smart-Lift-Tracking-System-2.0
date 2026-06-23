@@ -3,5 +3,5 @@ import { ApiResponse, AnalyticsSummary } from "@/types";
 
 export async function getAnalytics(): Promise<AnalyticsSummary> {
   const res = await axiosInstance.get<ApiResponse<AnalyticsSummary>>("/analytics");
-  return res.data.data;
+  return res.data.data ?? (res.data as unknown as AnalyticsSummary);
 }

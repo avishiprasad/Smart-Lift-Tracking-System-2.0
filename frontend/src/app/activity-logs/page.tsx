@@ -1,53 +1,61 @@
 "use client";
 
-import { AlertTriangle, Wrench, Info } from "lucide-react";
+import { useMemo, useState } from "react";
+import { History } from "lucide-react";
+import { DashboardShell } from "@/components/layout/dashboard-shell";
+import { ActivityTimeline } from "@/components/activity/activity-timeline";
+import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Notification, NotificationType } from "@/types";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { useActivityLogs } from "@/hooks/useActivityLogs";
 
-const ICONS: Record<NotificationType, typeof AlertTriangle> = {
-  danger: AlertTriangle,
-  warning: Wrench,
-  info: Info,
-};
+export default function ActivityLogsPage() {
+  const { data: logs, isLoading } = useActivityLogs();
+  const [search, setSearch] = useState("");
 
-const TONES: Record<NotificationType, string> = {
-  danger: "text-danger bg-danger/15",
-  warning: "text-warning bg-warning/15",
-  info: "text-secondary bg-secondary/15",
-};
-
-export function NotificationPreview({ notifications, isLoading }: { notifications?: Notification[]; isLoading: boolean }) {
-  if (isLoading) {
-    return (
-      <div className="space-y-3">
-        {[1, 2].map((i) => (
-          <Skeleton key={i} className="h-14 w-full rounded-xl bg-card/60" />
-        ))}
-      </div>
-    );
-  }
-
-  if (!notifications?.length) {
-    return <p className="text-sm text-muted-foreground">No notifications.</p>;
-  }
+  const filtered = useMemo(
+    () =>
+      logs?.filter(
+        (l) =>
+          l.description.toLowerCase().includes(search.toLowerCase()) ||
+          l.performedBy.toLowerCase().includes(search.toLowerCase())
+      ),
+    [logs, search]
+  );
 
   return (
-    <ul className="space-y-3">
-      {notifications.slice(0, 4).map((n, i) => {
-        const Icon = ICONS[n.type];
-        return (
-          <li key={i} className="flex items-start gap-3 rounded-xl border border-border bg-background/40 p-3">
-            <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", TONES[n.type])}>
-              <Icon className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-medium text-white">{n.title}</p>
-              <p className="truncate text-xs text-muted-foreground">{n.message}</p>
-            </div>
-          </li>
-        );
-      })}
-    </ul>
+    <DashboardShell>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-xl font-semibold text-white">Activity Logs</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Full audit trail of operational events.
+          </p>
+        </div>
+
+        <Input
+          placeholder="Search by description or user..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-sm border-border bg-card/60 text-white placeholder:text-muted-foreground"
+        />
+
+        {isLoading ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <Skeleton key={i} className="h-20 w-full rounded-xl bg-card/40" />
+            ))}
+          </div>
+        ) : !filtered?.length ? (
+          <EmptyState
+            icon={History}
+            title="No activity found"
+            description="Logged events will appear here as they happen."
+          />
+        ) : (
+          <ActivityTimeline logs={filtered} />
+        )}
+      </div>
+    </DashboardShell>
   );
 }

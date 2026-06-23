@@ -8,5 +8,7 @@ export function useActivityLogs() {
   return useQuery<ActivityLog[]>({
     queryKey: ["activity-logs"],
     queryFn: ActivityService.getAll,
+    retry: 1,
+    throwOnError: false,
   });
 }

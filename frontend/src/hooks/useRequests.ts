@@ -9,13 +9,16 @@ export function useRequests() {
   return useQuery<LiftRequest[]>({
     queryKey: ["requests"],
     queryFn: RequestService.getAll,
+    retry: 1,
+    throwOnError: false,
   });
 }
 
 export function useCreateRequest() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (payload: { requestedFloor: number; destinationFloor: number }) => RequestService.create(payload),
+    mutationFn: (payload: { requestedFloor: number; destinationFloor: number }) =>
+      RequestService.create(payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["requests"] }),
     onError: handleApiError,
   });

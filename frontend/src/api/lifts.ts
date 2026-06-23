@@ -3,10 +3,15 @@ import { ApiResponse, Lift } from "@/types";
 
 export async function getLifts(): Promise<Lift[]> {
   const res = await axiosInstance.get<ApiResponse<Lift[]>>("/lifts");
-  return res.data.data;
+  // Handle both {success, data: [...]} and direct array responses
+  const payload = res.data.data ?? (res.data as unknown as Lift[]);
+  return Array.isArray(payload) ? payload : [];
 }
 
-export async function createLift(payload: { liftNumber: number; servingFloors: number[] }): Promise<Lift> {
+export async function createLift(payload: {
+  liftNumber: number;
+  servingFloors: number[];
+}): Promise<Lift> {
   const res = await axiosInstance.post<ApiResponse<Lift>>("/lifts", payload);
   return res.data.data;
 }
