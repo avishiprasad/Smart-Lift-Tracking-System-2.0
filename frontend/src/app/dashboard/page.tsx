@@ -60,8 +60,6 @@ export default function DashboardPage() {
           <KpiCard label="Active" value={summary?.activeLifts ?? 0} icon={Activity} tone="success" />
           <KpiCard label="Maintenance" value={summary?.maintenanceLifts ?? 0} icon={Wrench} tone="warning" />
           <KpiCard label="Emergency" value={summary?.emergencyLifts ?? 0} icon={AlertTriangle} tone="danger" />
-          <KpiCard label="Avg Occupancy" value={Number(summary?.avgOccupancy ?? 0)} icon={Gauge} tone="secondary" />
-          <KpiCard label="Avg ETA" value={Number(summary?.avgETA ?? 0)} suffix="s" icon={Clock} tone="primary" />
           <KpiCard label="Completed Requests" value={summary?.completedRequests ?? 0} icon={CheckCircle2} tone="success" />
         </div>
 

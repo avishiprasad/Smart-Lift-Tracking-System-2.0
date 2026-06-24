@@ -47,8 +47,6 @@ export default function AnalyticsPage() {
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-            <KpiCard label="Avg Occupancy" value={Number(summary?.avgOccupancy ?? 0)} icon={Gauge} tone="primary" />
-            <KpiCard label="Avg ETA" value={Number(summary?.avgETA ?? 0)} suffix="s" icon={Clock} tone="secondary" />
             <KpiCard label="Completed Requests" value={summary?.completedRequests ?? 0} icon={CheckCircle2} tone="success" />
             <KpiCard label="Pending Requests" value={summary?.pendingRequests ?? 0} icon={Hourglass} tone="warning" />
           </div>
@@ -69,17 +67,7 @@ export default function AnalyticsPage() {
             </ResponsiveContainer>
           </ChartCard>
 
-          <ChartCard title="Occupancy by Lift" subtitle="Current snapshot">
-            <ResponsiveContainer width="100%" height={240}>
-              <BarChart data={occupancyByLift}>
-                <CartesianGrid stroke="#1F2937" strokeDasharray="3 3" />
-                <XAxis dataKey="lift" stroke="#9CA3AF" fontSize={11} />
-                <YAxis stroke="#9CA3AF" fontSize={11} allowDecimals={false} />
-                <Tooltip contentStyle={{ background: "#111827", border: "1px solid #1F2937", borderRadius: 8 }} />
-                <Bar dataKey="occupancy" fill="#8B5CF6" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartCard>
+          
         </div>
       </div>
     </DashboardShell>
