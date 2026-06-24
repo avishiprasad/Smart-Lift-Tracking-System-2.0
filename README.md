@@ -1,3 +1,5 @@
+Live Demo : https://smart-lift-tracking-system-2-0.vercel.app
+
 🚀 Smart Lift Tracking System (SLTS)
 A real-time elevator monitoring and management platform that simulates lift operations in a multi-floor building using intelligent scheduling, live tracking, maintenance monitoring, analytics, and WebSocket-based updates.
 
