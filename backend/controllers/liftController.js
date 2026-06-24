@@ -1,4 +1,4 @@
-const Lift = require("../models/Lift");
+const Lift = require("../models/lift");
 
 // Create Lift
 const createLift = async (req, res) => {
