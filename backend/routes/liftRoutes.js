@@ -7,7 +7,7 @@ const {
   getLiftById,
   updateLift,
   deleteLift,
-} = require("../controllers/LiftController");
+} = require("../controllers/liftController");
 
 // Create Lift
 router.post("/", createLift);
