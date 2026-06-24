@@ -5,7 +5,7 @@ const errorHandler = require("./middleware/errorHandler");
 
 const connectDB = require("./config/db");
 
-const liftRoutes = require("./routes/LiftRoutes");
+const liftRoutes = require("./routes/liftRoutes");
 const requestRoutes = require("./routes/requestRoutes");
 
 const { startScheduler } = require("./scheduler/Scheduler");
