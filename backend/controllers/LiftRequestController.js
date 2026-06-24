@@ -1,6 +1,8 @@
 const { createLiftRequest } = require("../services/LiftRequestService");
 const LiftRequest = require("../models/liftRequest");
 const validateRequest = require("../validators/requestValidator");
+const { getIO } =
+require("../socket/socketManager");
 
 const createRequest = async (req, res, next) => {
   try {
@@ -23,6 +25,15 @@ const createRequest = async (req, res, next) => {
       destinationFloor,
       direction,
     });
+
+    try {
+
+      getIO().emit(
+        "requestCreated",
+        request
+      );
+    
+    } catch (err) {}
 
     return res.status(201).json({
       success: true,

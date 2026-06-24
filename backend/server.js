@@ -1,8 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
-const errorHandler=
-require("./middleware/errorHandler");
+const errorHandler = require("./middleware/errorHandler");
 
 const connectDB = require("./config/db");
 
@@ -33,39 +32,43 @@ app.use("/api/maintenance", maintenanceRoutes);
 
 // Health Check
 app.get("/", (req, res) => {
-    res.send("Smart Lift Tracking Backend Running");
+  res.send("Smart Lift Tracking Backend Running");
 });
 
 const PORT = process.env.PORT || 5000;
 app.use(errorHandler);
 
-
 // Start Server
 const startServer = async () => {
-    try {
-        // Connect Database
-        await connectDB();
+  try {
+    // Connect Database
+    await connectDB();
 
-        // Start Lift Scheduler
-        startScheduler();
+    // Start Lift Scheduler
+    startScheduler();
 
-        // Start Express Server
-        app.listen(PORT, () => {
-            console.log(`🚀 Server running on port ${PORT}`);
-        });
+    // // Start Express Server
+    // app.listen(PORT, () => {
+    //     console.log(`🚀 Server running on port ${PORT}`);
+    // });
+    const http = require("http");
+    const server = http.createServer(app);
+    const { initSocket } = require("./socket/socketManager");
+    initSocket(server);
+    server.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
 
-    } catch (error) {
-        console.error("Failed to start server:", error);
-        process.exit(1);
-    }
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
 };
 
 startServer();
-const {
-    updateMaintenanceStatus,
-  } = require("./scheduler/MaintenanceScheduler");
-    
-  setInterval(
-    updateMaintenanceStatus,
-    10000//for testing else use 60 * 60 * 1000 // every hour
-  );
+const { updateMaintenanceStatus } = require("./scheduler/MaintenanceScheduler");
+
+setInterval(
+  updateMaintenanceStatus,
+  10000 //for testing else use 60 * 60 * 1000 // every hour
+);

@@ -1,5 +1,6 @@
 const Lift = require("../models/Lift");
 const LiftRequest = require("../models/liftRequest");
+const { getIO } = require("../socket/socketManager");
 
 const {
   FLOOR_TRAVEL_TIME,
@@ -101,17 +102,41 @@ const tick = async () => {
       Math.abs(target - current) *
       FLOOR_TRAVEL_TIME;
 
-    await Lift.findByIdAndUpdate(
-      lift._id,
-      {
-        currentFloor: current,
-        targetFloor: target,
-        direction,
-        status,
-        eta,
-        requestQueue: lift.requestQueue,
+      const updatedLift =
+      await Lift.findByIdAndUpdate(
+        lift._id,
+        {
+          currentFloor: current,
+          targetFloor: target,
+          direction,
+          status,
+          eta,
+          requestQueue: lift.requestQueue,
+        },
+        { returnDocument: "after" }
+      );
+    
+      try {
+
+        getIO().emit(
+          "liftUpdated",
+          updatedLift
+        );
+      
+        console.log(
+          "EMITTED:",
+          updatedLift.liftNumber,
+          "Floor:",
+          updatedLift.currentFloor
+        );
+      
+      } catch (err) {
+      
+        console.log(
+          "Socket emit skipped"
+        );
+      
       }
-    );
   }
 };
 

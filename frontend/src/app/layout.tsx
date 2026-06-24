@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { Providers } from "./providers";
+
+import QueryProvider from "@/providers/query-provider";
+import SocketProvider from "@/providers/socket-provider";
+import { AppProvider } from "@/context/app-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -10,11 +13,22 @@ export const metadata: Metadata = {
   description: "Enterprise Real-Time Elevator Monitoring Platform",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.className} bg-background text-white antialiased`}>
-        <Providers>{children}</Providers>
+      <body
+        className={`${inter.className} bg-background text-white antialiased`}
+      >
+        <QueryProvider>
+          <AppProvider>
+            <SocketProvider />
+            {children}
+          </AppProvider>
+        </QueryProvider>
       </body>
     </html>
   );

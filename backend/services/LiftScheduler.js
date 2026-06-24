@@ -6,7 +6,12 @@ const assignNearestLift = async ({
 }) => {
 
   const lifts = await Lift.find({
-    status: { $ne: "MAINTENANCE" },
+    status: {
+      $nin: [
+        "MAINTENANCE",
+        "EMERGENCY",
+      ],
+    },
   });
 
   let bestLift = null;

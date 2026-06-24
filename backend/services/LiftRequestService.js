@@ -9,7 +9,6 @@ const createLiftRequest = async ({
     destinationFloor,
     direction
 }) => {
-
     const lift = await assignNearestLift({
         requestedFloor,
         destinationFloor
@@ -26,6 +25,14 @@ const createLiftRequest = async ({
         assignedLift: lift._id,
         status: "ASSIGNED"
     });
+    
+    const { getIO } =
+    require("../socket/socketManager");
+    
+    getIO().emit(
+        "requestCreated",
+        request
+    );
 
     if (!queueContainsStop(lift.requestQueue, requestedFloor, "PICKUP")) {
         lift.requestQueue.push({

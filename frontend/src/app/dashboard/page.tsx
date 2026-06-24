@@ -37,10 +37,13 @@ export default function DashboardPage() {
       ).map(([status, count]) => ({ status, count }))
     : [];
 
-  const requestsByLift = lifts
+    const requestsByLift = lifts
     ? lifts.map((l) => ({
         lift: `L${l.liftNumber}`,
-        requests: requests?.filter((r) => r.assignedLift === l._id).length ?? 0,
+        requests:
+          requests?.filter(
+            (r) => r.assignedLift?._id === l._id
+          ).length ?? 0,
       }))
     : [];
 
