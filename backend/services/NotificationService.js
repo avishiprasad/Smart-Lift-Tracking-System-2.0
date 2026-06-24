@@ -1,4 +1,4 @@
-const Lift = require("../models/Lift");
+const Lift = require("../models/lift");
 const MaintenanceRecord = require("../models/MaintenanceRecord");
 
 const getNotifications = async () => {

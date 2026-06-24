@@ -1,4 +1,4 @@
-const Lift = require("../models/Lift");
+const Lift = require("../models/lift");
 const LiftRequest = require("../models/liftRequest");
 const { getIO } = require("../socket/socketManager");
 

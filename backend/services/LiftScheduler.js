@@ -1,4 +1,4 @@
-const Lift = require("../models/Lift");
+const Lift = require("../models/lift");
 // score =distance+(queue length × 2)
 const assignNearestLift = async ({
   requestedFloor,

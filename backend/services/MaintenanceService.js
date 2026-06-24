@@ -1,5 +1,5 @@
 const MaintenanceRecord = require("../models/MaintenanceRecord");
-const Lift = require("../models/Lift");
+const Lift = require("../models/lift");
 
 const {
   logActivity,
